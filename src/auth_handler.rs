@@ -64,6 +64,10 @@ pub async fn login(
     }
 }
 
+pub async fn get_me(logged_user: LoggedUser) -> HttpResponse {
+    HttpResponse::Ok().json(logged_user)
+}
+
 // diesel query
 fn query(auth_data: AuthData, pool: web::Data<Pool>) -> Result<SlimUser, ServiceError> {
     use crate::schema::users::dsl::{email, users};

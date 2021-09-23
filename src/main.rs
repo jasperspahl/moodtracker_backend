@@ -49,7 +49,8 @@ async fn main() -> std::io::Result<()> {
                     .service(
                         web::resource("/auth")
                             .route(web::post().to(auth_handler::login))
-                            .route(web::delete().to(auth_handler::logout)),
+                            .route(web::delete().to(auth_handler::logout))
+                            .route(web::get().to(auth_handler::get_me)),
                     )
                     .service(
                         web::resource("/register")
