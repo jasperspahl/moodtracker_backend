@@ -96,10 +96,10 @@ pub struct Entry {
 
 #[derive(Debug, Insertable)]
 #[table_name = "entrys"]
-pub struct NewEntry<'a> {
+pub struct NewEntry {
     pub user_id: i32,
     pub mood_id: i32,
-    pub desc: Option<&'a str>,
+    pub desc: Option<String>,
     pub created_at: Option<std::time::SystemTime>,
 }
 
@@ -122,11 +122,11 @@ pub struct NewEntryImage<'a> {
     pub image_url: &'a str,
 }
 
-#[derive(Debug, Queryable, Identifiable, Associations)]
+#[derive(Debug, Serialize, Queryable, Identifiable, Associations)]
 #[belongs_to(Entry)]
 #[belongs_to(Activity)]
 #[table_name = "entry_activities"]
-pub struct EnrtyActivity {
+pub struct EntryActivity {
     pub id: i32,
     pub entry_id: i32,
     pub activity_id: i32,

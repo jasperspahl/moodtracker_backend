@@ -6,11 +6,13 @@ extern crate log;
 use actix_identity::CookieIdentityPolicy;
 use actix_identity::IdentityService;
 use actix_web::{middleware, web, App, HttpResponse, HttpServer, Responder};
+use auth_handler::LoggedUser;
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 
 mod activity_handler;
 mod auth_handler;
+mod entry_handler;
 mod errors;
 mod models;
 mod mood_handler;
@@ -69,6 +71,11 @@ async fn main() -> std::io::Result<()> {
                         web::resource("/mood")
                             .route(web::post().to(mood_handler::create_mood))
                             .route(web::get().to(mood_handler::get_moods)),
+                    )
+                    .service(
+                        web::resource("/entry")
+                            .route(web::get().to(entry_handler::get_entrys))
+                            .route(web::post().to(entry_handler::create_entry)),
                     ),
             )
             .route("/", web::get().to(index))
@@ -78,6 +85,9 @@ async fn main() -> std::io::Result<()> {
     .await
 }
 
-async fn index() -> impl Responder {
+async fn index(logged_user: Option<LoggedUser>) -> impl Responder {
+    if let Some(user) = logged_user {
+        return HttpResponse::Ok().body(format!("Hello {}", &user.email));
+    }
     HttpResponse::Ok().body("Hello World")
 }
