@@ -1338,6 +1338,7 @@ dependencies = [
  "futures",
  "juniper",
  "lazy_static",
+ "log",
  "r2d2",
  "rust-argon2",
  "serde",

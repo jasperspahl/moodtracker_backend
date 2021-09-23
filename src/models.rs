@@ -45,7 +45,7 @@ impl From<User> for SlimUser {
     }
 }
 
-#[derive(Debug, Queryable, Identifiable, Associations, AsChangeset)]
+#[derive(Debug, Serialize, Queryable, Identifiable, Associations, AsChangeset)]
 #[belongs_to(User)]
 pub struct Mood {
     pub id: i32,
@@ -64,7 +64,7 @@ pub struct NewMood {
     pub icon: String,
 }
 
-#[derive(Debug, Queryable, Identifiable, Associations, AsChangeset)]
+#[derive(Debug, Serialize, Queryable, Identifiable, Associations, AsChangeset)]
 #[belongs_to(User)]
 #[table_name = "activities"]
 pub struct Activity {
@@ -82,7 +82,7 @@ pub struct NewActivity<'a> {
     pub icon: String,
 }
 
-#[derive(Debug, Queryable, Identifiable, Associations)]
+#[derive(Debug, Serialize, Queryable, Identifiable, Associations)]
 #[belongs_to(User)]
 #[belongs_to(Mood)]
 #[table_name = "entrys"]
@@ -91,7 +91,7 @@ pub struct Entry {
     pub user_id: i32,
     pub mood_id: i32,
     pub desc: Option<String>,
-    pub created_at: chrono::NaiveDateTime,
+    pub created_at: std::time::SystemTime,
 }
 
 #[derive(Debug, Insertable)]
@@ -100,10 +100,10 @@ pub struct NewEntry<'a> {
     pub user_id: i32,
     pub mood_id: i32,
     pub desc: Option<&'a str>,
-    pub created_at: Option<chrono::NaiveDateTime>,
+    pub created_at: Option<std::time::SystemTime>,
 }
 
-#[derive(Debug, Queryable, Identifiable, Associations)]
+#[derive(Debug, Serialize, Queryable, Identifiable, Associations)]
 #[belongs_to(User)]
 #[belongs_to(Entry)]
 #[table_name = "entry_images"]

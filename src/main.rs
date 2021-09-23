@@ -1,5 +1,7 @@
 #[macro_use]
 extern crate diesel;
+extern crate env_logger;
+extern crate log;
 
 use actix_identity::CookieIdentityPolicy;
 use actix_identity::IdentityService;
@@ -7,9 +9,11 @@ use actix_web::{middleware, web, App, HttpResponse, HttpServer, Responder};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 
+mod activity_handler;
 mod auth_handler;
 mod errors;
 mod models;
+mod mood_handler;
 mod register_handler;
 mod schema;
 mod utils;
@@ -55,6 +59,16 @@ async fn main() -> std::io::Result<()> {
                     .service(
                         web::resource("/register")
                             .route(web::post().to(register_handler::register)),
+                    )
+                    .service(
+                        web::resource("/activity")
+                            .route(web::post().to(activity_handler::create_activity))
+                            .route(web::get().to(activity_handler::get_activities)),
+                    )
+                    .service(
+                        web::resource("/mood")
+                            .route(web::post().to(mood_handler::create_mood))
+                            .route(web::get().to(mood_handler::get_moods)),
                     ),
             )
             .route("/", web::get().to(index))
