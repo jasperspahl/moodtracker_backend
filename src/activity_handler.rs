@@ -39,12 +39,11 @@ fn create_activity_query(
     activity_data: ActivityData,
     pool: web::Data<Pool>,
 ) -> Result<Activity, ServiceError> {
-    use crate::schema::{activities::dsl::activities, users::dsl::users};
+    use crate::schema::activities::dsl::activities;
 
     let conn = &pool.get().unwrap();
-    let user: User = users.find(logged_user.id).get_result::<User>(conn)?;
     let new_activity = NewActivity {
-        user_id: user.id,
+        user_id: logged_user.id,
         name: &activity_data.name,
         icon: activity_data.icon,
     };

@@ -39,12 +39,11 @@ fn create_mood_query(
     mood_data: MoodData,
     pool: web::Data<Pool>,
 ) -> Result<Mood, ServiceError> {
-    use crate::schema::{moods::dsl::moods, users::dsl::users};
+    use crate::schema::moods::dsl::moods;
 
     let conn = &pool.get().unwrap();
-    let user: User = users.find(logged_user.id).get_result::<User>(conn)?;
     let new_mood = NewMood {
-        user_id: user.id,
+        user_id: logged_user.id,
         name: mood_data.name,
         value: mood_data.value,
         icon: mood_data.icon,
