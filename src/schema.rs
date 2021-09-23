@@ -27,9 +27,9 @@ table! {
 table! {
     entrys (id) {
         id -> Int4,
-        author_id -> Int4,
+        user_id -> Int4,
         mood_id -> Int4,
-        desc -> Option<Text>,
+        desc -> Nullable<Text>,
         created_at -> Timestamp,
     }
 }
@@ -47,7 +47,6 @@ table! {
 table! {
     users (id) {
         id -> Int4,
-        username -> Varchar,
         email -> Varchar,
         hash -> Varchar,
     }
@@ -59,7 +58,7 @@ joinable!(entry_activities -> entrys (entry_id));
 joinable!(entry_images -> entrys (entry_id));
 joinable!(entry_images -> users (user_id));
 joinable!(entrys -> moods (mood_id));
-joinable!(entrys -> users (author_id));
+joinable!(entrys -> users (user_id));
 joinable!(moods -> users (user_id));
 
 allow_tables_to_appear_in_same_query!(
