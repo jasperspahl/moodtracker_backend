@@ -55,7 +55,7 @@ pub async fn login(
             let user_json = serde_json::to_string(&user).unwrap();
 
             id.remember(user_json);
-            Ok(HttpResponse::Ok().finish())
+            Ok(HttpResponse::Ok().json(user))
         }
         Err(err) => match err {
             BlockingError::Error(service_error) => Err(service_error),
