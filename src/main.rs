@@ -1,11 +1,13 @@
+/* cSpell: disable */
 #[macro_use]
 extern crate diesel;
 extern crate env_logger;
 extern crate log;
 
+use actix_cors::Cors;
 use actix_identity::CookieIdentityPolicy;
 use actix_identity::IdentityService;
-use actix_web::{middleware, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{http, middleware, web, App, HttpResponse, HttpServer, Responder};
 use auth_handler::LoggedUser;
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
@@ -30,6 +32,7 @@ async fn main() -> std::io::Result<()> {
     env_logger::init();
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let frontend_url = std::env::var("FRONTEND_URL").expect("FRONTEND_URL must be set");
 
     let manager = ConnectionManager::<PgConnection>::new(database_url);
     let pool = r2d2::Pool::builder()
@@ -38,7 +41,13 @@ async fn main() -> std::io::Result<()> {
     let domain = std::env::var("DOMAIN").unwrap_or_else(|_| "localhost".to_string());
 
     HttpServer::new(move || {
+        let cors = Cors::default()
+            .allow_any_method()
+            .allow_any_header()
+            .allowed_origin(&frontend_url)
+            .supports_credentials();
         App::new()
+            .wrap(cors)
             .data(pool.clone())
             // enable Logger
             .wrap(middleware::Logger::default())
