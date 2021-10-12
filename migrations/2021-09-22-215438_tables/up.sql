@@ -42,18 +42,18 @@ CREATE TABLE "entry_images" (
 	CONSTRAINT "entry_images_pk" PRIMARY KEY ("id")
 ) WITH (OIDS = FALSE);
 ALTER TABLE "moods"
-ADD CONSTRAINT "moods_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("id");
+ADD CONSTRAINT "moods_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;
 ALTER TABLE "entrys"
-ADD CONSTRAINT "entrys_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("id");
+ADD CONSTRAINT "entrys_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;
 ALTER TABLE "entrys"
-ADD CONSTRAINT "entrys_fk1" FOREIGN KEY ("mood_id") REFERENCES "moods"("id");
+ADD CONSTRAINT "entrys_fk1" FOREIGN KEY ("mood_id") REFERENCES "moods"("id") ON DELETE CASCADE;
 ALTER TABLE "activities"
-ADD CONSTRAINT "activities_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("id");
+ADD CONSTRAINT "activities_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;
 ALTER TABLE "entry_activities"
-ADD CONSTRAINT "entry_activities_fk0" FOREIGN KEY ("entry_id") REFERENCES "entrys"("id");
+ADD CONSTRAINT "entry_activities_fk0" FOREIGN KEY ("entry_id") REFERENCES "entrys"("id") ON DELETE CASCADE;
 ALTER TABLE "entry_activities"
-ADD CONSTRAINT "entry_activities_fk1" FOREIGN KEY ("activity_id") REFERENCES "activities"("id");
+ADD CONSTRAINT "entry_activities_fk1" FOREIGN KEY ("activity_id") REFERENCES "activities"("id") ON DELETE CASCADE;
 ALTER TABLE "entry_images"
-ADD CONSTRAINT "entry_images_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("id");
+ADD CONSTRAINT "entry_images_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;
 ALTER TABLE "entry_images"
-ADD CONSTRAINT "entry_images_fk1" FOREIGN KEY ("entry_id") REFERENCES "entrys"("id");
+ADD CONSTRAINT "entry_images_fk1" FOREIGN KEY ("entry_id") REFERENCES "entrys"("id") ON DELETE CASCADE;
