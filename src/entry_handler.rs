@@ -40,7 +40,6 @@ fn get_entrys_query(
     use crate::schema::{
         activities::dsl::{activities, id},
         entry_activities::dsl::{activity_id, entry_activities, entry_id},
-        entrys::dsl::{entrys, user_id},
         entrys::dsl::{created_at, entrys, user_id},
         moods::dsl::moods,
         users::dsl::users,
@@ -141,4 +140,55 @@ fn create_entry_query(
         .get_results(conn)?;
     dbg!(&inserted_activities);
     Ok((inserted_entry, inserted_activities))
+}
+
+pub async fn get_entry_by_id(
+    logged_user: LoggedUser,
+    id: web::Path<String>,
+    pool: web::Data<Pool>,
+) -> Result<HttpResponse, ServiceError> {
+    let id = id.into_inner().parse::<i32>().unwrap();
+    let res = web::block(move || get_entry_by_id_query(id, logged_user, pool)).await;
+
+    match res {
+        Ok(res) => Ok(HttpResponse::Ok().json(&res)),
+        Err(err) => match err {
+            BlockingError::Error(service_error) => Err(service_error),
+            BlockingError::Canceled => Err(ServiceError::InternalServerError),
+        },
+    }
+}
+
+fn get_entry_by_id_query(
+    id: i32,
+    logged_user: LoggedUser,
+    pool: web::Data<Pool>,
+) -> Result<BigEntry, ServiceError> {
+    use crate::schema::{
+        activities::dsl::{activities, id as activities_id},
+        entry_activities::dsl::{activity_id, entry_activities, entry_id},
+        entrys::dsl::{entrys, user_id},
+        moods::dsl::moods,
+    };
+    let conn = &pool.get().unwrap();
+    let entry = entrys
+        .find(id)
+        .filter(user_id.eq(logged_user.id))
+        .get_result::<Entry>(conn)?;
+    let mood = moods.find(entry.mood_id).get_result::<Mood>(conn)?;
+    let activity_ids = entry_activities
+        .filter(entry_id.eq(entry.id))
+        .select(activity_id)
+        .get_results::<i32>(conn)?;
+    let activity_vec = activities
+        .filter(activities_id.eq_any(activity_ids))
+        .get_results::<Activity>(conn)?;
+    Ok(BigEntry {
+        id,
+        user_id: logged_user.id,
+        mood,
+        desc: entry.desc,
+        created_at: entry.created_at,
+        activities: activity_vec,
+    })
 }

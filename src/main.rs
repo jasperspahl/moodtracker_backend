@@ -85,6 +85,10 @@ async fn main() -> std::io::Result<()> {
                         web::resource("/entry")
                             .route(web::get().to(entry_handler::get_entrys))
                             .route(web::post().to(entry_handler::create_entry)),
+                    )
+                    .service(
+                        web::resource("/entry/{id}")
+                            .route(web::get().to(entry_handler::get_entry_by_id))
                     ),
             )
             .route("/", web::get().to(index))
