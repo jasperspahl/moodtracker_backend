@@ -41,6 +41,7 @@ fn get_entrys_query(
         activities::dsl::{activities, id},
         entry_activities::dsl::{activity_id, entry_activities, entry_id},
         entrys::dsl::{entrys, user_id},
+        entrys::dsl::{created_at, entrys, user_id},
         moods::dsl::moods,
         users::dsl::users,
     };
@@ -49,6 +50,7 @@ fn get_entrys_query(
     let user: User = users.find(logged_user.id).get_result::<User>(conn)?;
     let entry_vec = entrys
         .filter(user_id.eq(user.id))
+        .order(created_at.desc())
         .get_results::<Entry>(conn)?;
 
     let mut res = Vec::new();
