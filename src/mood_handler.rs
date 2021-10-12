@@ -75,11 +75,14 @@ fn get_moods_query(
     logged_user: LoggedUser,
     pool: web::Data<Pool>,
 ) -> Result<Vec<Mood>, ServiceError> {
+    use crate::schema::moods::dsl::value;
     use crate::schema::users::dsl::users;
 
     let conn = &pool.get().unwrap();
     let user = users.find(logged_user.id).get_result::<User>(conn)?;
-    let moods = Mood::belonging_to(&user).get_results(conn)?;
+    let moods = Mood::belonging_to(&user)
+        .order(value.desc())
+        .get_results(conn)?;
 
     Ok(moods)
 }
