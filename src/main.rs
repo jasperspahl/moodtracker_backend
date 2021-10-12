@@ -7,7 +7,7 @@ extern crate log;
 use actix_cors::Cors;
 use actix_identity::CookieIdentityPolicy;
 use actix_identity::IdentityService;
-use actix_web::{http, middleware, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{middleware, web, App, HttpResponse, HttpServer, Responder};
 use auth_handler::LoggedUser;
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
